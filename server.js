@@ -6,11 +6,11 @@ require('dotenv').config();
 const databaseConfig = require('./config/db');
 const userController = require('./controllers/userController');
 const mainCalled = require('./jwtstartegy');
-
+mainCalled(passport);
 app.use(express.json());
 app.use(passport.initialize());
 // require('./jwtstartegy')(passport)
-mainCalled(passport);
+
 
 // connect to database
 (async()=>{
@@ -25,10 +25,10 @@ mainCalled(passport);
     }
 })();
 
-console.log(process.env.SECRET_HASH_KEY);
 userController(app);
 app.get('/check',passport.authenticate('jwt',{session:false}),(req,res)=>{
-    res.status(200).json({message:'Success'});
+    
+    res.status(200).json({message:'Success',user:req.user ? req.user : 'Not Set'});
 });
 
 

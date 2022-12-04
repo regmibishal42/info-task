@@ -44,8 +44,6 @@ const login = async(req,res) =>{
             const token = jwt.sign({
                 iss: username,
                 sub: user.id,
-                iat: new Date().getTime(),
-                exp: new Date().setDate(new Date().getDate() + 1)
               }, process.env.SECRET_HASH_KEY);
               return res.status(200).json(token);
         }
