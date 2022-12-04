@@ -30,7 +30,11 @@ userController(app);
 productsController(app);
 
 app.use((error,req,res,next)=>{
-    return res.status(400).json(error);
+    return res.status(400).json({
+        success:false,
+        message:"An Error Occured",
+        error
+    });
 })
 
 app.listen(3000,()=>console.log('Server Working on Port 3000'));
