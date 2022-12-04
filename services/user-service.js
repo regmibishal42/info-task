@@ -6,16 +6,17 @@ const userSchema = require('../validators/user-validator');
 const {hashPassword, comparePasswords} = require('../utils/passwordHashing');
 const jwt = require('jsonwebtoken');
 
-const getAllUsers = async(req,res)=>{
+const getAllUsers = async(req,res,next)=>{
     try{
         const users = await fetchAllUsers();
         return res.status(200).json(users);
-    }catch(e){
-        throw e;
+    }catch(error){
+        console.log('Fucking Error Occured',error);
+        next(error);
     }
 };
 
-const createNewUser = async(req,res) =>{
+const createNewUser = async(req,res,next) =>{
     try{
         const {username,password} = req.body;
         await userSchema.create.validateAsync({
@@ -28,12 +29,13 @@ const createNewUser = async(req,res) =>{
         const user = await createUser({username,password:hasedPassword});
         res.status(200).json(user);
     }
-    catch(err){
-        throw err;
+    catch(error){
+        console.log('Fucking Error Occured',error);
+        next(error);
     }
 };
 
-const login = async(req,res) =>{
+const login = async(req,res,next) =>{
     try{
         
         const {username,password} = req.body;
@@ -51,26 +53,29 @@ const login = async(req,res) =>{
             message:'Login Failed'
         })
     }
-    catch(e){
-        throw e;
+    catch(error){
+        console.log('Fucking Error Occured',error);
+        next(error);
     }
 }
 
-const deleteUser = async(req,res) =>{
+const deleteUser = async(req,res,next) =>{
     try{
         const {id} = req.params;
         await userSchema.checkParams.validateAsync({id});
         const response = await deleteUserById(id);
         return res.status(200).json(response)
     }
-    catch(e){
-        throw(e);
+    catch(error){
+        console.log('Fucking Error Occured',error);
+        next(error);
     }
 };
 
 const protectedUserRoute = async(req,res) =>{
     res.status(200).json({
-        message:'Accessed By Logged In User'
+        message:'Accessed By Logged In User',
+        user:req.user? req.user : 'User Not Found'
     })
 }
 

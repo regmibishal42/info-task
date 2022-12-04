@@ -1,23 +1,12 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-const UserModel = require('./Models/UserModel');
 const {findUserById} = require('./repository/user-respository');
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET_HASH_KEY;
 
-// const jwtAutherer = async (payload,done) =>{
-//     console.log('Jwt authere Called');
-//     const user = await UserModel.findByPk(payload.sub);
-//     console.log('Payload is Here',payload.sub);
-//     if(user) return done(null,user);
-//     else return done(err);
-// }
-// const mainCalled = (passport) => {
-//     console.log('JWT passport called');
-//     passport.use(new JwtStrategy(opts,jwtAutherer))
-// };
+
 
 module.exports = function(passport){
     console.log('Verifying Token')
