@@ -74,7 +74,33 @@ const updateProductDetails = async(req,res,next) =>{
 };
 
 const buyProduct = async(req,res,next) =>{
-    
+    try{
+        const {productId,quantity} = req.body;
+        await productSchema.buy.validateAsync({id:productId,quantity});
+        const product = await getProductById(productId);   
+        console.log(product,productId,quantity);
+        if(!product) return res.status(404).json({
+            success:false,
+            message:`Product with Id ${productId} not found`
+        });
+        if(product.quantity < quantity) return res.status(400).json({
+            success:false,
+            message:`There Are Only ${product.quantity} stocks left`
+        });
+        let remeaningStock = product.quantity - quantity;
+        const isPurchaseSuccess = await updateProduct({quantity:remeaningStock},productId);
+        if(isPurchaseSuccess) return res.status(200).json({
+            success:true,
+            message:`Product ${product.name} Is Ordered with ${quantity} amount`,
+        });
+        return res.status(400).json({
+            success:false,
+            message:'Failed TO buy Product'
+        });
+    }catch(error){
+        console.log('Error While Buying Product',error);
+        next(error);
+    }
 }
 
 module.exports = {
@@ -82,4 +108,5 @@ module.exports = {
     createNewProduct,
     updateProductDetails,
     fetchProductsById,
+    buyProduct
 }
